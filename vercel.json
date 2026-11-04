@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/past-life/(.*)",
+      "destination": "https://sprint-common-nutlike.ngrok-free.dev/past-life/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
