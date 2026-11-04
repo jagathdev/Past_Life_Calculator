@@ -29,8 +29,14 @@ export default {
         'pulse-slow': 'pulseSlow 6s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'fade-in-up': 'fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         'fade-in': 'fadeIn 1.5s ease-out forwards',
+        'indeterminate': 'indeterminate 1.8s ease-in-out infinite',
       },
       keyframes: {
+        indeterminate: {
+          '0%': { transform: 'translateX(-100%) scaleX(0.2)' },
+          '50%': { transform: 'translateX(0%) scaleX(0.7)' },
+          '100%': { transform: 'translateX(100%) scaleX(0.2)' },
+        },
         float: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-12px)' },

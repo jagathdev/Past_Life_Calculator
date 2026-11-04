@@ -72,7 +72,7 @@ const HomePage = () => {
         </div>
       </div>
 
-      <div id="lead-form-section" className="relative z-10 max-w-[1250px] mx-auto px-6 md:px-8 w-full flex justify-center mt-8 lg:mt-12 mb-4 lg:mb-6">
+      <div id="lead-form-section" className="relative z-30 max-w-[1250px] mx-auto px-6 md:px-8 w-full flex justify-center mt-8 lg:mt-12 mb-4 lg:mb-6">
         <div className="w-full max-w-[440px] animate-fade-in-up">
           <LeadForm onReportReady={(data) => {
             setReportData(data);
@@ -96,9 +96,11 @@ const HomePage = () => {
         </div>
       )}
 
-      <Features />
+      <div className="relative z-0">
+        <Features />
+      </div>
 
-      <div className="relative z-10 max-w-[1200px] mx-auto px-6 md:px-8 pt-2 md:pt-4 pb-1 md:pb-2 w-full mt-2 md:mt-4">
+      <div className="relative z-0 max-w-[1200px] mx-auto px-6 md:px-8 pt-2 md:pt-4 pb-1 md:pb-2 w-full mt-2 md:mt-4">
         <div className="text-center mb-10 md:mb-16">
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="w-12 h-[2px] bg-[#C04921]"></div>
