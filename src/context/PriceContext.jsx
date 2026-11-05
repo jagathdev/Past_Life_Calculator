@@ -42,6 +42,7 @@ export const parseAstroVedCurrency = (raw) => {
 export const getAstroVedCookieCurrency = () => {
   if (typeof document === 'undefined') return null;
 
+  // 1. Primary: Check exact 'currentcurrency' cookie first
   try {
     const cookies = (document.cookie || '').split(';');
     for (let c of cookies) {
@@ -49,17 +50,35 @@ export const getAstroVedCookieCurrency = () => {
       const key = parts[0]?.trim();
       const val = parts.slice(1).join('=').trim();
 
-      if (/^(currentcurrency|currency|selectedcurrency|usercurrency)$/i.test(key)) {
+      if (/^currentcurrency$/i.test(key)) {
         const decoded = decodeURIComponent(val);
         const parsed = parseAstroVedCurrency(decoded);
         if (parsed) return parsed;
       }
     }
   } catch (err) {
-    console.warn('Error reading cookie currency:', err);
+    console.warn('Error reading currentcurrency cookie:', err);
   }
 
-  // Also check currencysymbol cookie (e.g. '$' -> USD, '₹' -> INR, '£' -> GBP, etc.)
+  // 2. Secondary: Check alternative currency cookies ('currency', 'selectedcurrency', 'usercurrency')
+  try {
+    const cookies = (document.cookie || '').split(';');
+    for (let c of cookies) {
+      const parts = c.trim().split('=');
+      const key = parts[0]?.trim();
+      const val = parts.slice(1).join('=').trim();
+
+      if (/^(currency|selectedcurrency|usercurrency)$/i.test(key)) {
+        const decoded = decodeURIComponent(val);
+        const parsed = parseAstroVedCurrency(decoded);
+        if (parsed) return parsed;
+      }
+    }
+  } catch (err) {
+    console.warn('Error reading alternative cookie currency:', err);
+  }
+
+  // 3. Check currencysymbol cookie ONLY if currentcurrency is not present
   try {
     const cookies = (document.cookie || '').split(';');
     for (let c of cookies) {
@@ -105,7 +124,13 @@ export const getAstroVedCookieCurrency = () => {
  * window global variables, localStorage, or browser location.
  */
 export const detectCurrentCurrency = () => {
-  // 1. URL parameters have highest override priority (?currency=USD or ?curr=MYR)
+  // 1. AstroVed Cookie ('currentcurrency') - Primary Source of Truth
+  const cookieCurrency = getAstroVedCookieCurrency();
+  if (cookieCurrency) {
+    return cookieCurrency;
+  }
+
+  // 2. URL parameters (?currency=USD or ?curr=MYR or ?currentcurrency=USD)
   if (typeof window !== 'undefined') {
     try {
       const params = new URLSearchParams(window.location.search);
@@ -117,12 +142,6 @@ export const detectCurrentCurrency = () => {
     } catch {
       // Ignore URL parsing errors
     }
-  }
-
-  // 2. AstroVed Cookie ('currentcurrency') - Primary Source of Truth
-  const cookieCurrency = getAstroVedCookieCurrency();
-  if (cookieCurrency) {
-    return cookieCurrency;
   }
 
   // 3. Global window variable (if injected by AstroVed page)
