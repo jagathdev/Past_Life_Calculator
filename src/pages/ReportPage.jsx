@@ -50,8 +50,8 @@ const ReportPage = ({ embedded = false }) => {
                   key={num}
                   onClick={() => setActiveSection(num)}
                   className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-md text-[11px] font-semibold transition-all ${isActive
-                      ? 'bg-gradient-to-r from-[#F26C4F] to-[#F7931E] text-white shadow-sm'
-                      : 'text-gray-500 hover:bg-gray-50'
+                    ? 'bg-gradient-to-r from-[#F26C4F] to-[#F7931E] text-white shadow-sm'
+                    : 'text-gray-500 hover:bg-gray-50'
                     }`}
                 >
                   <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[8px] border ${isActive ? 'border-white/50 text-white' : 'border-gray-200 text-gray-400'
@@ -82,13 +82,21 @@ const ReportPage = ({ embedded = false }) => {
 
       {/* Main Content Area */}
       <div className="flex-1 h-full p-4 md:p-8 lg:p-12 overflow-y-auto relative transition-all duration-300">
-        
+
         {/* Document Container */}
         <div className="w-full max-w-[1000px] mx-auto min-h-full bg-[#FAF8F2] rounded-3xl shadow-2xl p-6 md:p-10 lg:p-16 relative">
 
           {/* Document Header */}
-          <div className="flex items-center justify-between border-b border-gray-200 pb-8 mb-10 relative">
-            <img src="https://cdn.astroved.com/images/images-av/AstroVed-Logo.svg" alt="AstroVed Logo" className="h-8 object-contain filter drop-shadow-sm" />
+          <div className="flex items-center justify-between border-b border-gray-200 pb-8 mb-10 relative" >
+
+            <a
+              href="https://www.astroved.com/"
+              target="_blank"
+              className="inline-block transition-transform hover:opacity-90 active:scale-95"
+              title="AstroVed"
+            >
+              <img src="https://cdn.astroved.com/images/images-av/AstroVed-Logo.svg" alt="AstroVed Logo" className="h-8 object-contain filter drop-shadow-sm" />
+            </a>
 
             <div className="absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2">
               <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>

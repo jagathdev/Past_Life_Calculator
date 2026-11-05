@@ -3,7 +3,7 @@ import fetchPriceList from "../api/PriceApi";
 
 /**
  * Normalizes any currency representation (code, numeric ID, ASP.NET cookie string)
- * into a standard 3-letter currency code ('USD', 'INR', 'MYR', 'GBP', etc.)
+ * into one of the 3 allowed currency codes: 'INR', 'USD', 'MYR'.
  */
 export const parseAstroVedCurrency = (raw) => {
   if (!raw) return null;
@@ -12,38 +12,27 @@ export const parseAstroVedCurrency = (raw) => {
   // 1. Check if string contains explicit CurrencyCode=XXX
   const codeMatch = str.match(/(?:CurrencyCode|currency|code)\s*=\s*([A-Za-z]{3})/i);
   if (codeMatch && codeMatch[1]) {
-    return codeMatch[1].toUpperCase();
+    const code = codeMatch[1].toUpperCase();
+    if (code === 'USD' || code === 'INR' || code === 'MYR') return code;
   }
 
-  // 2. Check if string contains explicit CurrencyId=X (1=USD, 2=INR, 3=MYR, 5=GBP)
+  // 2. Check if string contains explicit CurrencyId=X (1=USD, 2=INR, 3=MYR)
   const idMatch = str.match(/(?:CurrencyId|id)\s*=\s*(\d+)/i);
   if (idMatch && idMatch[1]) {
     const id = idMatch[1];
     if (id === '1') return 'USD';
     if (id === '2') return 'INR';
     if (id === '3') return 'MYR';
-    if (id === '5') return 'GBP';
   }
 
   const clean = str.toUpperCase();
 
-  // 3. Direct numeric ID mapping
-  if (clean === '1' || clean === 'USD') return 'USD';
-  if (clean === '2' || clean === 'INR') return 'INR';
-  if (clean === '3' || clean === 'MYR') return 'MYR';
-  if (clean === '5' || clean === 'GBP') return 'GBP';
-  if (clean === 'EUR') return 'EUR';
-  if (clean === 'CAD') return 'CAD';
-  if (clean === 'AUD') return 'AUD';
-  if (clean === 'SGD') return 'SGD';
+  // 3. Direct code / ID match
+  if (clean === '1' || clean === 'USD' || clean.includes('USD')) return 'USD';
+  if (clean === '2' || clean === 'INR' || clean.includes('INR')) return 'INR';
+  if (clean === '3' || clean === 'MYR' || clean.includes('MYR')) return 'MYR';
 
-  // 4. Substring presence check
-  if (clean.includes('USD')) return 'USD';
-  if (clean.includes('MYR')) return 'MYR';
-  if (clean.includes('GBP')) return 'GBP';
-  if (clean.includes('INR')) return 'INR';
-
-  return clean.length === 3 ? clean : null;
+  return null;
 };
 
 /**
@@ -68,6 +57,26 @@ export const getAstroVedCookieCurrency = () => {
     }
   } catch (err) {
     console.warn('Error reading cookie currency:', err);
+  }
+
+  // Also check currencysymbol cookie (e.g. '$' -> USD, '₹' -> INR, '£' -> GBP, etc.)
+  try {
+    const cookies = (document.cookie || '').split(';');
+    for (let c of cookies) {
+      const parts = c.trim().split('=');
+      const key = parts[0]?.trim();
+      const val = parts.slice(1).join('=').trim();
+      if (/^currencysymbol$/i.test(key)) {
+        const symbol = decodeURIComponent(val).trim();
+        if (symbol === '$' || symbol.includes('US$') || symbol.includes('$')) return 'USD';
+        if (symbol === '₹') return 'INR';
+        if (symbol === '£') return 'GBP';
+        if (symbol === '€') return 'EUR';
+        if (symbol.includes('MYR')) return 'MYR';
+      }
+    }
+  } catch {
+    // Ignore
   }
 
   // Also check parent window cookie if accessible (when embedded on astroved.com)

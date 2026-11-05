@@ -25,7 +25,14 @@ const HomePage = () => {
     <>
       <div className="relative z-10 max-w-[1250px] mx-auto p-6 md:p-8 w-full flex flex-col animate-fade-in">
         <header className="mb-4 md:mb-6">
-          <img src="https://cdn.astroved.com/images/images-av/AstroVed-Logo.svg" alt="AstroVed Logo" className="h-8 md:h-10 w-auto drop-shadow-lg" />
+          <a
+            href="https://www.astroved.com/"
+            target="_blank"
+            className="inline-block transition-transform hover:opacity-90 active:scale-95"
+            title="AstroVed"
+          >
+            <img src="https://cdn.astroved.com/images/images-av/AstroVed-Logo.svg" alt="AstroVed Logo" className="h-8 md:h-10 w-auto drop-shadow-lg" />
+          </a>
         </header>
         <div id="main-content" className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-8 lg:gap-8 items-center mt-2">
           {/* Hero text: placed second on mobile/tablet, first on desktop (laptop) */}

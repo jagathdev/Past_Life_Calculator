@@ -191,33 +191,50 @@ const CityAutocomplete = ({ value, country, onChange, name, placeholder, icon: I
   const dropdownRef = useRef(null);
   const timeoutRef = useRef(null);
 
+  const isSelectingRef = useRef(false);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
-        if (onBlurValidate) onBlurValidate();
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [onBlurValidate]);
+  }, []);
+
+  // If country changes, clear previously fetched city options and search cache
+  useEffect(() => {
+    setOptions([]);
+    setIsOpen(false);
+  }, [country]);
 
   const fetchCities = async (searchTerm) => {
-    if (!searchTerm || searchTerm.length < 2 || !country) {
+    const trimmed = (searchTerm || '').trim();
+    if (!trimmed || trimmed.length < 2 || !country) {
       setOptions([]);
       return;
     }
     setIsLoading(true);
     try {
       const locationBase = (import.meta.env.VITE_LOCATION_API_URL || "https://webservice.astroved.com/Api/Panchang/PopulateCityBycountry").trim();
-      const apiUrl = `${locationBase}/${encodeURIComponent(country)}/${encodeURIComponent(searchTerm)}`;
+      const apiUrl = `${locationBase}/${encodeURIComponent(country.trim())}/${encodeURIComponent(trimmed)}`;
       const response = await fetch(apiUrl, {
         headers: {
           'Accept': 'application/json, application/xml, text/xml, */*'
         }
       });
       const data = await parseGeoResponse(response);
-      setOptions(Array.isArray(data) ? data : []);
+      const rawList = Array.isArray(data) ? data : [];
+      // Strictly filter to ensure only cities belonging to the selected country are displayed
+      const filtered = rawList.filter(item => {
+        if (!item || !item.City) return false;
+        if (item.Country) {
+          return item.Country.trim().toLowerCase() === country.trim().toLowerCase();
+        }
+        return true;
+      });
+      setOptions(filtered);
     } catch (error) {
       console.error("Error fetching cities from Location API:", error);
       setOptions([]);
@@ -227,11 +244,41 @@ const CityAutocomplete = ({ value, country, onChange, name, placeholder, icon: I
   };
 
   const handleInputChange = (e) => {
-    const newValue = e.target.value;
+    let newValue = e.target.value;
+    // Disallow starting with empty space
+    if (newValue.startsWith(' ')) {
+      newValue = newValue.trimStart();
+    }
+    // Prevent consecutive spaces
+    newValue = newValue.replace(/\s{2,}/g, ' ');
+
     onChange({ target: { name, value: newValue } });
-    setIsOpen(true);
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => fetchCities(newValue), 300);
+    
+    // Only open and fetch if there are at least 2 non-whitespace characters
+    const trimmed = newValue.trim();
+    if (trimmed.length >= 2) {
+      setIsOpen(true);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => fetchCities(trimmed), 250);
+    } else {
+      setIsOpen(false);
+      setOptions([]);
+    }
+  };
+
+  const handleBlur = () => {
+    // If user is clicking an option from the dropdown, do not validate blur
+    if (isSelectingRef.current) return;
+
+    // Trim trailing whitespace on blur
+    if (value && value !== value.trim()) {
+      onChange({ target: { name, value: value.trim() } });
+    }
+    setTimeout(() => {
+      if (!isSelectingRef.current && onBlurValidate) {
+        onBlurValidate();
+      }
+    }, 150);
   };
 
   return (
@@ -243,12 +290,8 @@ const CityAutocomplete = ({ value, country, onChange, name, placeholder, icon: I
           name={name}
           value={value}
           onChange={handleInputChange}
-          onFocus={() => { if (value && value.length >= 2) setIsOpen(true); }}
-          onBlur={() => {
-            setTimeout(() => {
-              if (onBlurValidate) onBlurValidate();
-            }, 250);
-          }}
+          onFocus={() => { if (value && value.trim().length >= 2) setIsOpen(true); }}
+          onBlur={handleBlur}
           placeholder={placeholder}
           className={`w-full h-8 border rounded-lg font-sans text-[13px] bg-white text-gray-800 transition-all focus:outline-none placeholder-gray-400 ${Icon ? 'pl-8 pr-2.5' : 'px-2.5'
             } ${hasError
@@ -258,7 +301,7 @@ const CityAutocomplete = ({ value, country, onChange, name, placeholder, icon: I
           autoComplete="off"
         />
       </div>
-      {isOpen && (value && value.length >= 2) && (
+      {isOpen && (value && value.trim().length >= 2) && (
         <div className="absolute z-[999] w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-2xl max-h-[190px] overflow-y-auto">
           {isLoading ? (
             <div className="px-3 py-2 text-xs text-gray-500 bg-white">Searching cities...</div>
@@ -269,10 +312,16 @@ const CityAutocomplete = ({ value, country, onChange, name, placeholder, icon: I
               <div
                 key={`${option.City}-${index}`}
                 className="px-3 py-2 cursor-pointer bg-white hover:bg-orange-50/70 transition-colors text-gray-800 border-b border-gray-100 last:border-b-0"
+                onMouseDown={() => {
+                  isSelectingRef.current = true;
+                }}
                 onClick={() => {
                   onChange({ target: { name, value: option.City } });
                   if (onSelectCity) onSelectCity(option);
                   setIsOpen(false);
+                  setTimeout(() => {
+                    isSelectingRef.current = false;
+                  }, 200);
                 }}
               >
                 <div className="text-xs font-semibold text-gray-900">{option.City}</div>
@@ -377,6 +426,30 @@ const LeadForm = ({ onReportReady }) => {
       if (value.length > 50) value = value.slice(0, 50);
     }
 
+    // If country changes, reset previously chosen city and city data
+    if (name === 'country' && value !== formData.country) {
+      setFormData(prev => ({ ...prev, [name]: value, city: '' }));
+      setSelectedCityData(null);
+      setFieldErrors(prev => {
+        const copy = { ...prev };
+        delete copy.country;
+        delete copy.city;
+        return copy;
+      });
+      return;
+    }
+
+    // Email filtering: disallow any spaces
+    if (name === 'email') {
+      value = value.replace(/\s+/g, '');
+    }
+
+    // City filtering: disallow starting spaces, collapse multi spaces
+    if (name === 'city') {
+      if (value.startsWith(' ')) value = value.trimStart();
+      value = value.replace(/\s{2,}/g, ' ');
+    }
+
     setFormData(prev => ({ ...prev, [name]: value }));
 
     // Real-time error clearance
@@ -394,7 +467,7 @@ const LeadForm = ({ onReportReady }) => {
       setErrorMessage('');
     }
 
-    if (name === 'city' && selectedCityData && selectedCityData.City !== value) {
+    if (name === 'city' && selectedCityData && selectedCityData.City?.trim().toLowerCase() !== value.trim().toLowerCase()) {
       setSelectedCityData(null);
     }
   };
@@ -453,8 +526,12 @@ const LeadForm = ({ onReportReady }) => {
     }
     if (!formData.city || !formData.city.trim()) {
       errors.city = 'Please enter and select your birth city from the dropdown.';
-    } else if (!selectedCityData || selectedCityData.City?.toLowerCase() !== formData.city.trim().toLowerCase()) {
-      errors.city = 'Please select a valid city from the suggestion dropdown list.';
+    } else if (
+      !selectedCityData ||
+      selectedCityData.City?.toLowerCase() !== formData.city.trim().toLowerCase() ||
+      (selectedCityData.Country && formData.country && selectedCityData.Country.toLowerCase() !== formData.country.toLowerCase())
+    ) {
+      errors.city = `Please select a valid city in ${formData.country} from the dropdown.`;
     }
 
     setFieldErrors(errors);
@@ -511,9 +588,9 @@ const LeadForm = ({ onReportReady }) => {
       if (geoLatitude === null || isNaN(geoLatitude) || geoLongitude === null || isNaN(geoLongitude)) {
         setFieldErrors(prev => ({
           ...prev,
-          city: 'Please select a valid city from the suggestion dropdown list.'
+          city: `Please select a valid city in ${formData.country} from the dropdown list.`
         }));
-        setErrorMessage('Please select a valid city from the suggestion dropdown list.');
+        setErrorMessage(`Please select a valid city in ${formData.country} from the dropdown list.`);
         setIsSubmitting(false);
         return;
       }
@@ -844,8 +921,12 @@ const LeadForm = ({ onReportReady }) => {
                     onBlurValidate={() => {
                       if (!formData.city.trim()) {
                         setFieldErrors(prev => ({ ...prev, city: 'Please enter and select your birth city from the dropdown.' }));
-                      } else if (!selectedCityData || selectedCityData.City?.toLowerCase() !== formData.city.trim().toLowerCase()) {
-                        setFieldErrors(prev => ({ ...prev, city: 'Please select a valid city from the suggestion dropdown list.' }));
+                      } else if (
+                        !selectedCityData ||
+                        selectedCityData.City?.toLowerCase() !== formData.city.trim().toLowerCase() ||
+                        (selectedCityData.Country && formData.country && selectedCityData.Country.toLowerCase() !== formData.country.toLowerCase())
+                      ) {
+                        setFieldErrors(prev => ({ ...prev, city: `Please select a valid city in ${formData.country} from the dropdown.` }));
                       }
                     }}
                     placeholder="Birth City/District"

@@ -243,7 +243,6 @@ const WelcomeContent = ({ reportData: propReportData, soulDirection: propSoulDir
         <a
           href="https://www.astroved.com/Customized-Reports-Karmic-Astrology-Report-Past-Life-Influence-Report--P399.aspx"
           target="_blank"
-          rel="noopener noreferrer"
           className="relative overflow-hidden bg-[#C04921] text-white border-none rounded-lg px-5 py-2.5 sm:px-6 sm:py-3 text-xs sm:text-[13.5px] font-bold cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(192,73,33,0.2)] z-10 group hover:bg-[#a63d1a] inline-flex items-center justify-center no-underline"
         >
           <span className="relative z-10 flex items-center justify-center gap-1.5 drop-shadow-sm">

@@ -29,6 +29,8 @@ export const parsePriceData = (data) => {
         const id = node.getElementsByTagName('CurrencyId')[0]?.textContent?.trim();
         const sellingPrice = node.getElementsByTagName('SellingPrice')[0]?.textContent?.trim();
         const listPrice = node.getElementsByTagName('ListPrice')[0]?.textContent?.trim();
+        const yousave = node.getElementsByTagName('Yousave')[0]?.textContent?.trim();
+        const youSavePercentage = node.getElementsByTagName('YouSavePercentage')[0]?.textContent?.trim();
 
         if (code && sellingPrice) {
           list.push({
@@ -36,6 +38,8 @@ export const parsePriceData = (data) => {
             CurrencyId: id ? parseInt(id, 10) : undefined,
             SellingPrice: parseFloat(sellingPrice),
             ListPrice: listPrice ? parseFloat(listPrice) : parseFloat(sellingPrice),
+            Yousave: yousave ? parseFloat(yousave) : 0,
+            YouSavePercentage: youSavePercentage ? parseFloat(youSavePercentage) : 0,
           });
         }
       }
