@@ -253,7 +253,7 @@ const CityAutocomplete = ({ value, country, onChange, name, placeholder, icon: I
     newValue = newValue.replace(/\s{2,}/g, ' ');
 
     onChange({ target: { name, value: newValue } });
-    
+
     // Only open and fetch if there are at least 2 non-whitespace characters
     const trimmed = newValue.trim();
     if (trimmed.length >= 2) {
@@ -419,11 +419,11 @@ const LeadForm = ({ onReportReady }) => {
   const handleChange = (e) => {
     let { name, value } = e.target;
 
-    // Name filtering: letters and spaces only, max 50 chars, no leading spaces
+    // Name filtering: letters and spaces only, max 25 chars, no leading spaces
     if (name === 'fullName') {
       value = value.replace(/[^a-zA-Z\s]/g, ''); // letters and spaces only
       if (value.startsWith(' ')) value = value.trimStart();
-      if (value.length > 50) value = value.slice(0, 50);
+      if (value.length > 25) value = value.slice(0, 25);
     }
 
     // If country changes, reset previously chosen city and city data
@@ -479,10 +479,10 @@ const LeadForm = ({ onReportReady }) => {
     const nameTrimmed = formData.fullName.trim();
     if (!nameTrimmed) {
       errors.fullName = 'Please enter your full name.';
-    } else if (nameTrimmed.length < 2) {
+    } else if (nameTrimmed.length < 3) {
       errors.fullName = 'Name must be at least 2 characters long.';
-    } else if (nameTrimmed.length > 50) {
-      errors.fullName = 'Name cannot exceed 50 characters.';
+    } else if (nameTrimmed.length > 25) {
+      errors.fullName = 'Name cannot exceed 25 characters.';
     }
 
     // 2. Email Validation
@@ -744,7 +744,7 @@ const LeadForm = ({ onReportReady }) => {
                       name="fullName"
                       value={formData.fullName}
                       onChange={handleChange}
-                      placeholder="Your Name (max 50 letters)"
+                      placeholder="Your Name"
                       maxLength={50}
                       className={`w-full h-8 pl-8 pr-2.5 border rounded-lg font-sans text-[13px] bg-white text-gray-800 focus:outline-none placeholder-gray-400 ${fieldErrors.fullName
                         ? 'border-red-400 bg-red-50/20 ring-1 ring-red-400'
