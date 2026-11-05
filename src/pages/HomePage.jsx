@@ -23,7 +23,7 @@ const HomePage = () => {
 
   return (
     <>
-      <div className="relative z-10 max-w-[1250px] mx-auto p-6 md:p-8 w-full flex flex-col animate-fade-in">
+      <div className="relative z-10 max-w-[1250px] mx-auto px-4 py-5 sm:p-6 md:p-8 w-full flex flex-col animate-fade-in">
         <header className="mb-4 md:mb-6">
           <a
             href="https://www.astroved.com/"
@@ -79,7 +79,7 @@ const HomePage = () => {
         </div>
       </div>
 
-      <div id="lead-form-section" className="relative z-30 max-w-[1250px] mx-auto px-6 md:px-8 w-full flex justify-center mt-8 lg:mt-12 mb-4 lg:mb-6">
+      <div id="lead-form-section" className="relative z-30 max-w-[1250px] mx-auto px-3 sm:px-6 md:px-8 w-full flex justify-center mt-6 sm:mt-8 lg:mt-12 mb-4 lg:mb-6">
         <div className="w-full max-w-[440px] animate-fade-in-up">
           <LeadForm onReportReady={(data) => {
             setReportData(data);

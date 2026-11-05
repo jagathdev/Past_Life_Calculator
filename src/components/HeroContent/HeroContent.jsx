@@ -46,24 +46,24 @@ const HeroContent = ({ onCtaClick }) => {
         </div>
       </div>
 
-      <div className="mt-2 flex flex-col items-start">
+      <div className="mt-2 w-full flex flex-col items-center sm:items-start">
         <button
           type="button"
           onClick={onCtaClick}
-          className="bg-[#C04921] hover:bg-[#a63d1a] text-white border-none rounded-md px-6 py-3.5 text-base font-semibold cursor-pointer transition-all w-full sm:w-auto text-center inline-block"
+          className="bg-[#C04921] hover:bg-[#a63d1a] active:scale-[0.99] text-white border-none rounded-xl px-6 py-3.5 text-[15px] sm:text-base font-bold cursor-pointer transition-all duration-200 shadow-[0_4px_16px_rgba(192,73,33,0.25)] w-full sm:w-auto text-center inline-block"
         >
           <span className="flex items-center justify-center gap-2">
-            Reveal My Past-Life Karma
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            <span>Reveal My Past-Life Karma</span>
+            <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
           </span>
         </button>
       </div>
 
-      {/* Cosmic Karmic Decoder Strip */}
-      <div className="mt-0">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 p-2 bg-gradient-to-r from-white/90 via-[#FAF8F2]/90 to-white/90 backdrop-blur-md border border-black/5 rounded-2xl shadow-[0_4px_24px_rgba(192,73,33,0.06)]">
+      {/* Cosmic Karmic Decoder Strip - Responsive grid on iPhone/mobile and row on desktop */}
+      <div className="mt-1 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-3 items-stretch gap-2.5 p-2 bg-gradient-to-r from-white/90 via-[#FAF8F2]/90 to-white/90 backdrop-blur-md border border-black/5 rounded-2xl shadow-[0_4px_24px_rgba(192,73,33,0.06)] w-full">
           {/* Card 1: READS */}
-          <div className="flex-1 flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-black/[0.04] hover:border-[#C04921]/40 hover:shadow-[0_4px_16px_rgba(192,73,33,0.1)] transition-all duration-300 group">
+          <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-black/[0.04] hover:border-[#C04921]/40 hover:shadow-[0_4px_16px_rgba(192,73,33,0.1)] transition-all duration-300 group">
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#C04921]/10 text-[#C04921] flex items-center justify-center flex-shrink-0 group-hover:bg-[#C04921] group-hover:text-white transition-all duration-300 group-hover:scale-105 shadow-sm">
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="4" fill="currentColor" fillOpacity="0.15" />
@@ -81,15 +81,8 @@ const HeroContent = ({ onCtaClick }) => {
             </div>
           </div>
 
-          {/* Flow Connector */}
-          <div className="hidden sm:flex text-[#C04921]/60 items-center justify-center flex-shrink-0">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </div>
-
           {/* Card 2: REVEALS */}
-          <div className="flex-1 flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-black/[0.04] hover:border-[#C04921]/40 hover:shadow-[0_4px_16px_rgba(192,73,33,0.1)] transition-all duration-300 group">
+          <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-black/[0.04] hover:border-[#C04921]/40 hover:shadow-[0_4px_16px_rgba(192,73,33,0.1)] transition-all duration-300 group">
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#C04921]/10 text-[#C04921] flex items-center justify-center flex-shrink-0 group-hover:bg-[#C04921] group-hover:text-white transition-all duration-300 group-hover:scale-105 shadow-sm">
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6Z" fill="currentColor" fillOpacity="0.1" />
@@ -108,15 +101,8 @@ const HeroContent = ({ onCtaClick }) => {
             </div>
           </div>
 
-          {/* Flow Connector */}
-          <div className="hidden sm:flex text-[#C04921]/60 items-center justify-center flex-shrink-0">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </div>
-
           {/* Card 3: SHOWS */}
-          <div className="flex-1 flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-black/[0.04] hover:border-[#C04921]/40 hover:shadow-[0_4px_16px_rgba(192,73,33,0.1)] transition-all duration-300 group">
+          <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-black/[0.04] hover:border-[#C04921]/40 hover:shadow-[0_4px_16px_rgba(192,73,33,0.1)] transition-all duration-300 group">
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#C04921]/10 text-[#C04921] flex items-center justify-center flex-shrink-0 group-hover:bg-[#C04921] group-hover:text-white transition-all duration-300 group-hover:scale-105 shadow-sm">
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="12 2 14.8 9.2 22 12 14.8 14.8 12 22 9.2 14.8 2 12 9.2 9.2" fill="currentColor" fillOpacity="0.15" />
