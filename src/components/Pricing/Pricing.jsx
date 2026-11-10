@@ -8,7 +8,7 @@ const CURRENCY_SYMBOLS = {
 };
 
 const ASTROVED_STORE_URL =
-  'https://www.astroved.com/Customized-Reports-Karmic-Astrology-Report-Past-Life-Influence-Report--P399.aspx/promo=SL_MM_past_life_report';
+  'https://www.astroved.com/Customized-Reports-Karmic-Astrology-Report-Past-Life-Influence-Report--P399.aspx?promo=SL_MM_past_life_report';
 
 const formatDecimal = (num) => {
   if (num === null || num === undefined || isNaN(num)) return '0.00';
